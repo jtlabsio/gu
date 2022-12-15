@@ -25,6 +25,6 @@ jobs:
         github_token: ${{ secrets.GH_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
-        project_path: "./cmd/..."
+        project_path: "./cmd/main.go"
         binary_name: "gu"
         extra_files: LICENSE readme.md
