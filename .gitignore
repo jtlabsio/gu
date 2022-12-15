@@ -1,0 +1,11 @@
+/.mongo/
+/.vscode/
+*.db
+*.log
+.DS_Store
+/data/*.json
+/bin/
+/dist/
+/example/*.yml
+cmd/__debug_bin
+profile.cov
