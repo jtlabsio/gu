@@ -29,3 +29,4 @@ jobs:
         binary_name: "gu"
         build_command: "make build"
         extra_files: LICENSE readme.md
+        release_name: Release ${{ github.ref }}
