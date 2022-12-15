@@ -2,19 +2,19 @@
 
 ## Download
 
-If you have Go installed...
+Please visit <https://github.com/jtlabsio/gu/releases> to see all available releases...
 
 ```bash
-go install go.jtlabs.io/gu@v1.0.0
-```
-
-If you do not have Go installed...
-
-```bash
-# coming soon
+# download appropriate release
+mkdir -p gu
+tar -xvzf gu-v1.0.0-linux-amd64.tar.gz -C ./gu
+cd gu
+./gu
 ```
 
 ## Usage
+
+![](https://github.com/jtlabsio/gu/blob/main/demo.gif)
 
 ```bash
 # view latest installable versions
