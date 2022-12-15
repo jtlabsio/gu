@@ -9,3 +9,4 @@
 /example/*.yml
 cmd/__debug_bin
 profile.cov
+gu
