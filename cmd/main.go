@@ -29,6 +29,7 @@ var (
 	isArchive         = regexp.MustCompile(`archive`)
 	isDownloadRE      = regexp.MustCompile(`download`)
 	isFeaturedRE      = regexp.MustCompile(`featured`)
+	isPackageRE       = regexp.MustCompile(`\.pkg`)
 	isUnstableRE      = regexp.MustCompile(`unstable`)
 	latestRE          = regexp.MustCompile(`feature|latest|stable`)
 	platformVersionRE = regexp.MustCompile(`\/dl\/go([a-z0-9\.]*)\.(darwin|freebsd|linux|src|windows){1}(\-([a-z0-9]*))?`)
@@ -151,6 +152,12 @@ func extractDownloadLinks(n *html.Node) []download {
 
 func fromLink(l string) download {
 	url, _ := url.JoinPath(GODownloadsURL, path.Base(l))
+
+	// mac os patch: replace .pkg w/ .tar.gz
+	if isPackageRE.MatchString(url) {
+		url = isPackageRE.ReplaceAllString(url, ".tar.gz")
+	}
+
 	d := download{
 		Arch: DefaultDownloadValue,
 		OS:   DefaultDownloadValue,
