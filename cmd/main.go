@@ -22,6 +22,7 @@ import (
 const (
 	DefaultDownloadValue string = "unknown"
 	GODownloadsURL       string = "https://go.dev/dl/"
+	Version              string = "v1.0.2"
 )
 
 var (
@@ -43,10 +44,15 @@ type cmdOpts struct {
 	} `positional-args:"yes" required:"yes"`
 	Featured bool `short:"f" long:"featured" description:"Install featured version" required:"false"`
 	List     bool `short:"l" long:"ls" description:"Available Go versions" required:"false"`
+	Version  bool `short:"v" long:"version" description:"Version of gu utility" required:"false"`
 }
 
 func (co cmdOpts) ShowUsage() bool {
 	return !co.List && len(co.Args.Version) == 0
+}
+
+func (co cmdOpts) ShowVersion() bool {
+	return co.Version
 }
 
 type download struct {
@@ -292,6 +298,7 @@ func showUsage() {
 	fmt.Println("  -a, --archived  Include archived Go versions")
 	fmt.Println("  -f, --featured  Install featured version")
 	fmt.Println("  -l, --ls        Available Go versions")
+	fmt.Println("  -v, --version   Version of gu utility")
 	fmt.Println()
 	fmt.Println("Help Options:")
 	fmt.Println("  -h, --help      Show this help message")
@@ -300,6 +307,13 @@ func showUsage() {
 	fmt.Printf("  Install Go version 1.19.4:\n    %s 1.19.4\n", ex)
 	fmt.Println()
 	fmt.Printf("  Show archived Go download options:\n    %s -la\n", ex)
+	fmt.Println()
+
+	showVersion()
+}
+
+func showVersion() {
+	fmt.Printf("Version: %s\n", Version)
 	fmt.Println()
 }
 
@@ -312,6 +326,12 @@ func main() {
 	// parse the command line arguments
 	if _, err := prsr.Parse(); err != nil {
 		os.Exit(1)
+	}
+
+	// show version
+	if opts.ShowVersion() {
+		showVersion()
+		os.Exit(0)
 	}
 
 	// show usage
