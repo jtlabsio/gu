@@ -232,8 +232,15 @@ func installVersion(dl download) {
 			}
 
 		case tar.TypeReg:
+			pth := path.Join(df, header.Name)
+
+			// ensure the parent directory exists (fix for install go v1.21.0)
+			if err := os.MkdirAll(path.Dir(pth), 0755); err != nil {
+				log.Panicf("extract tar from gzip: MkdirAll() failed: %s", err.Error())
+			}
+
 			// create temp file
-			of, err := os.OpenFile(path.Join(df, header.Name), os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
+			of, err := os.OpenFile(pth, os.O_CREATE|os.O_RDWR, os.FileMode(header.Mode))
 			if err != nil {
 				log.Panicf("extract tar from gzip: Create() failed: %s", err.Error())
 			}
