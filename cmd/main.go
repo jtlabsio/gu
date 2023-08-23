@@ -22,7 +22,7 @@ import (
 const (
 	DefaultDownloadValue string = "unknown"
 	GODownloadsURL       string = "https://go.dev/dl/"
-	Version              string = "v1.0.2"
+	Version              string = "v1.1.1"
 )
 
 var (
