@@ -20,7 +20,7 @@ jobs:
             goos: windows
     steps:
     - uses: actions/checkout@v3
-    - uses: wangyoucao577/go-release-action@v1.34
+    - uses: wangyoucao577/go-release-action@v1
       with:
         asset_name: gu-${{ github.ref_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
         github_token: ${{ secrets.GH_TOKEN }}
