@@ -34,7 +34,7 @@ gu
 
 ## Compatibility
 
-This was developed on Linux, but it should theoretically work on Windows and Mac OS as well (though this hasn't been tested as of this release). 
+This was developed on Linux, but it should theoretically work on Windows and Mac OS as well (though this hasn't been tested as of this release).
 
 ## Notes
 

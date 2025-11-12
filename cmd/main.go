@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"os/exec"
 	"path"
 	"path/filepath"
 	"regexp"
@@ -42,9 +43,10 @@ type cmdOpts struct {
 	Args     struct {
 		Version []string
 	} `positional-args:"yes" required:"yes"`
-	Featured bool `short:"f" long:"featured" description:"Install featured version" required:"false"`
-	List     bool `short:"l" long:"ls" description:"Available Go versions" required:"false"`
-	Version  bool `short:"v" long:"version" description:"Version of gu utility" required:"false"`
+	Featured bool   `short:"f" long:"featured" description:"Install featured version" required:"false"`
+	Goroot   string `short:"g" long:"goroot" description:"Path to GOROOT (if not set as environment variable)" required:"false"`
+	List     bool   `short:"l" long:"ls" description:"Available Go versions" required:"false"`
+	Version  bool   `short:"v" long:"version" description:"Version of gu utility" required:"false"`
 }
 
 func (co cmdOpts) ShowUsage() bool {
@@ -86,6 +88,22 @@ func (d download) Installable() bool {
 
 func (d download) Platform() string {
 	return strings.Join([]string{d.OS, d.Arch}, " ")
+}
+
+func gorootPath(pth string) string {
+	if pth != "" {
+		return pth
+	}
+
+	if gr := os.Getenv("GOROOT"); gr != "" {
+		return gr
+	}
+
+	if out, err := exec.Command("go", "env", "GOROOT").Output(); err == nil {
+		return strings.TrimSpace(string(out))
+	}
+
+	return ""
 }
 
 func extractDownloadLinks(n *html.Node) []download {
@@ -187,7 +205,12 @@ func fromLink(l string) download {
 	return d
 }
 
-func installVersion(dl download) {
+func installVersion(dl download, pth string) {
+	// remove any existing installed versions of go (GOROOT)
+	if pth == "" {
+		log.Panicf("GOROOT not set (try re-running with [-g] or [--goroot])")
+	}
+
 	// download .tar.gz from the link
 	res, err := http.Get(dl.Url)
 	if err != nil {
@@ -195,16 +218,15 @@ func installVersion(dl download) {
 	}
 	defer res.Body.Close()
 
-	// remove any existing installed versions of go (GOROOT)
-	if err := os.RemoveAll(runtime.GOROOT()); err != nil {
+	if err := os.RemoveAll(pth); err != nil {
 		log.Panicf(
 			"remove previously installed version (%s) failed: %s",
-			runtime.GOROOT(),
+			pth,
 			err.Error())
 	}
 
 	// identify path to install go
-	df := path.Dir(runtime.GOROOT())
+	df := path.Dir(pth)
 
 	// open gzip reader
 	us, err := gzip.NewReader(res.Body)
@@ -259,7 +281,7 @@ func installVersion(dl download) {
 		}
 	}
 
-	fmt.Printf("installed version %s locally to %s\n", dl.Version, df)
+	fmt.Printf("installed version %s locally to %s\n", dl.Version, pth)
 }
 
 func showAvailable(lnks []download, ia bool) {
@@ -304,6 +326,7 @@ func showUsage() {
 	fmt.Println("Application Options:")
 	fmt.Println("  -a, --archived  Include archived Go versions")
 	fmt.Println("  -f, --featured  Install featured version")
+	fmt.Println("  -g, --goroot    Path to GOROOT (if not set as environment variable)")
 	fmt.Println("  -l, --ls        Available Go versions")
 	fmt.Println("  -v, --version   Version of gu utility")
 	fmt.Println()
@@ -405,6 +428,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Printf("installing version %s (%s)\n", dl.Version, dl.Url)
-	installVersion(dl)
+	pth := gorootPath(opts.Goroot)
+
+	// make sub-path folders if they do not exist
+	if _, err := os.Stat(path.Dir(pth)); os.IsNotExist(err) {
+		if err := os.MkdirAll(path.Dir(pth), 0755); err != nil {
+			log.Panicf("install to %s failed: MkdirAll() failed: %s", pth, err.Error())
+		}
+	}
+
+	fmt.Printf("installing version %s (%s) to %s\n", dl.Version, dl.Url, pth)
+	installVersion(dl, pth)
 }
