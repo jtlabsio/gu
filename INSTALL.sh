@@ -167,7 +167,7 @@ main() {
   ensure_tools_for_archive "$archive_ext"
 
   tmp_dir=$(mktemp -d)
-  trap 'rm -rf "$tmp_dir"' EXIT
+  trap '[[ -n "${tmp_dir:-}" ]] && rm -rf "$tmp_dir"' EXIT
 
   printf 'Downloading %s...\n' "$asset_name"
   download_file "$download_url" "${tmp_dir}/${asset_name}" "$download_tool" || abort "Download failed. Verify that release ${tag} supports ${os}/${arch}."
