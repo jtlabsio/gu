@@ -23,7 +23,7 @@ jobs:
     - uses: wangyoucao577/go-release-action@v1.40
       with:
         asset_name: gu-${{ github.ref_name }}-${{ matrix.goos }}-${{ matrix.goarch }}
-        github_token: ${{ secrets.GH_TOKEN }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         project_path: "."
