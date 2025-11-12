@@ -2,12 +2,22 @@
 
 ## Download
 
+### One-line install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/jtlabsio/gu/main/INSTALL.sh | bash
+```
+
+The installer grabs the latest GitHub release for your OS/architecture, extracts the `gu` binary, and places it into `~/.local/bin`, `~/.bin`, `~/bin`, or `%USERPROFILE%/AppData/Local/Programs/gu/bin` (Windows) (whichever exists and is writable). Pass `GU_INSTALL_DIR=/custom/path` to override the destination or `GU_VERSION=1.1.2` to pin a specific release (`v` prefix optional). The script requires `curl` (or `wget`) plus `tar`/`unzip`. On Windows, run the script through Git Bash or WSL.
+
+### Manual download
+
 Please visit <https://github.com/jtlabsio/gu/releases> to see all available releases...
 
 ```bash
 # download appropriate release
 mkdir -p gu
-tar -xvzf gu-v1.0.0-linux-amd64.tar.gz -C ./gu
+tar -xvzf gu-v1.2.0-linux-amd64.tar.gz -C ./gu
 cd gu
 ./gu
 ```
@@ -34,7 +44,7 @@ gu
 
 ## Compatibility
 
-This was developed on Linux, but it should theoretically work on Windows and Mac OS as well (though this hasn't been tested as of this release).
+This application is designed to work on MacOS, Linux and Windows.
 
 ## Notes
 
